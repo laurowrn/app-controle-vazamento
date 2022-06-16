@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:app/app/charts/daily_consumption_chart.dart';
-import 'package:app/app/charts/daily_consumption_data.dart';
+import 'package:app/app/charts/consumption_chart.dart';
+import 'package:app/app/charts/consumption_data.dart';
 import 'package:app/app/components/layout.dart';
 import 'package:flutter/material.dart';
 
@@ -12,21 +12,19 @@ class ConsumptionView extends StatefulWidget {
 }
 
 class _ConsumptionViewState extends State<ConsumptionView> {
-  final List<DailyConsumptionData> data1 = getData();
-  final List<DailyConsumptionData> data2 = getData();
+  final List<ConsumptionData> data1 = getData();
+  final List<ConsumptionData> data2 = getData();
   String dropdownValue = "Última hora";
   @override
   Widget build(BuildContext context) {
     return Layout(
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const SizedBox(
-              height: 50,
-            ),
             Container(
-              height: 70,
-              width: 400,
+              height: 60,
+              width: 150,
               child: DropdownButton<String>(
                 isExpanded: true,
                 iconSize: 50,
@@ -36,7 +34,7 @@ class _ConsumptionViewState extends State<ConsumptionView> {
                     value: value,
                     child: Text(
                       value,
-                      style: TextStyle(fontSize: 25),
+                      style: TextStyle(fontSize: 15),
                     ),
                   );
                 }).toList(),
@@ -46,9 +44,6 @@ class _ConsumptionViewState extends State<ConsumptionView> {
                   });
                 },
               ),
-            ),
-            const SizedBox(
-              height: 50,
             ),
             ChartCard(data: data1),
             ChartCard(data: data2),
@@ -61,27 +56,27 @@ class _ConsumptionViewState extends State<ConsumptionView> {
 }
 
 class ChartCard extends StatelessWidget {
-  final List<DailyConsumptionData> data;
+  final List<ConsumptionData> data;
   const ChartCard({Key? key, required this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 500,
-      height: 400,
+      width: MediaQuery.of(context).size.width * 0.9,
+      height: MediaQuery.of(context).size.height * 0.32,
       child: Card(
-        child: DailyConsumptionChart(data: data),
+        child: ConsumptionChart(data: data),
       ),
     );
   }
 }
 
-List<DailyConsumptionData> getData() {
-  List<DailyConsumptionData> data = [];
+List<ConsumptionData> getData() {
+  List<ConsumptionData> data = [];
   for (int i = -100; i < 100; i++) {
     data.add(
-      DailyConsumptionData(
-        hour: i,
+      ConsumptionData(
+        time: i,
         consumption: pow(i, 3).toInt(),
       ),
     );
