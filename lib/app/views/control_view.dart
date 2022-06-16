@@ -13,6 +13,7 @@ class _ControlViewState extends State<ControlView> {
   @override
   Widget build(BuildContext context) {
     return Layout(
+      body: Container(),
       title: "Controle",
     );
   }

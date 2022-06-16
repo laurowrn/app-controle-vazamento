@@ -11,6 +11,9 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
-    return Layout(title: "Configurações");
+    return Layout(
+      title: "Configurações",
+      body: Container(),
+    );
   }
 }

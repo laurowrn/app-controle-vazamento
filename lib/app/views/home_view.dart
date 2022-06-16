@@ -12,6 +12,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Layout(
+      body: Container(),
       title: "Home",
     );
   }

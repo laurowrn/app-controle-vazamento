@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class Layout extends StatefulWidget {
   final String title;
-  Layout({Key? key, required this.title}) : super(key: key);
+  final Widget body;
+  Layout({Key? key, required this.title, required this.body}) : super(key: key);
 
   @override
   State<Layout> createState() => _LayoutState();
@@ -18,6 +19,7 @@ class _LayoutState extends State<Layout> {
           widget.title,
         ),
       ),
+      body: widget.body,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
