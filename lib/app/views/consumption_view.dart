@@ -2,6 +2,9 @@ import 'dart:math';
 import 'package:app/app/charts/consumption_chart.dart';
 import 'package:app/app/charts/consumption_data.dart';
 import 'package:app/app/components/layout.dart';
+import 'package:app/app/models/SensorDataModel.dart';
+import 'package:app/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class ConsumptionView extends StatefulWidget {
@@ -12,12 +15,17 @@ class ConsumptionView extends StatefulWidget {
 }
 
 class _ConsumptionViewState extends State<ConsumptionView> {
+  ServerDataModel data = ServerDataModel();
   final List<ConsumptionData> data1 = getData();
   final List<ConsumptionData> data2 = getData();
   String dropdownValue = "Última hora";
   @override
   Widget build(BuildContext context) {
     return Layout(
+      refresh: () async {
+        var x = await data.getValveState("valve2");
+        print(x);
+      },
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -45,7 +53,12 @@ class _ConsumptionViewState extends State<ConsumptionView> {
                 },
               ),
             ),
-            ChartCard(data: data1),
+            FutureBuilder(
+              future: data.getSensorData("sensor1", "volume"),
+              builder: (context, snapshot) {
+                return Container();
+              },
+            ),
             ChartCard(data: data2),
           ],
         ),
