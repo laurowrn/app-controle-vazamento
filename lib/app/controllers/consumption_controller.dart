@@ -6,46 +6,35 @@ class ConsumptionController {
   ServerDataModel server = ServerDataModel();
 
   Future<List<ConsumptionData>> getLastHourVolumeConsumption() async {
-    var response = await server.getSensorData("sensor2", "volume");
+    List response = await server.getSensorData("sensor2", "volume");
     var length = response.length;
     var data;
-    if (length <= 720) {
-      data = response;
-    } else {
+    if (length >= 720) {
       data = response.sublist(length - 720, length);
+    } else {
+      data = response;
     }
     List<ConsumptionData> list = [];
-    response.forEach((element) {
-      var milliseconds = DateTime.now().millisecondsSinceEpoch - 5000 * length;
-      var date = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-      String formattedTime = DateFormat.Hm().format(date);
-      var hour = formattedTime.replaceAll(":", "");
-      var newData = ConsumptionData(time: int.parse(hour), consumption: element);
-      length--;
-      list.add(newData);
+    data.forEach((element) {
+      list.add(ConsumptionData(
+          time: element["timestamp"], consumption: element["value"]));
     });
     return list;
   }
 
   Future<List<ConsumptionData>> getLast24HVolumeConsumption() async {
-    var response = await server.getSensorData("sensor2", "volume");
+    List response = await server.getSensorData("sensor2", "volume");
     var length = response.length;
     var data;
-    if (length <= 17280) {
-      data = response;
+    if (length >= 720) {
+      data = response.sublist(length - 17280, length);
     } else {
-      data = response.sublist(length - 720, length);
+      data = response;
     }
-
     List<ConsumptionData> list = [];
-    response.forEach((element) {
-      var milliseconds = DateTime.now().millisecondsSinceEpoch - 5000 * length;
-      var date = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-      String formattedTime = DateFormat.Hm().format(date);
-      var hour = formattedTime.replaceAll(":", "");
-      var newData = ConsumptionData(time: int.parse(hour), consumption: element);
-      length--;
-      list.add(newData);
+    data.forEach((element) {
+      list.add(ConsumptionData(
+          time: element["timestamp"], consumption: element["value"]));
     });
     return list;
   }

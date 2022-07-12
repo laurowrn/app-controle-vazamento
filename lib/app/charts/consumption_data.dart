@@ -1,6 +1,6 @@
 class ConsumptionData {
   final int time;
-  final int consumption;
+  final double consumption;
 
   ConsumptionData({
     required this.time,

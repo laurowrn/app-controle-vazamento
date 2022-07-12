@@ -17,7 +17,7 @@ class _ConsumptionViewState extends State<ConsumptionView> {
   late Future<List<ConsumptionData>> last24H;
   String dropdownValue = "Última hora";
 
-  void getValues() async {
+  update() async {
     lastHour = consumptionController.getLastHourVolumeConsumption();
     last24H = consumptionController.getLastHourVolumeConsumption();
   }
@@ -25,7 +25,9 @@ class _ConsumptionViewState extends State<ConsumptionView> {
   @override
   void initState() {
     super.initState();
-    getValues();
+    setState(() {
+      update();
+    });
   }
 
   @override
@@ -34,8 +36,7 @@ class _ConsumptionViewState extends State<ConsumptionView> {
       actionIcon: Icons.refresh,
       action: () async {
         setState(() {
-          lastHour = consumptionController.getLastHourVolumeConsumption();
-          last24H = consumptionController.getLastHourVolumeConsumption();
+          update();
         });
       },
       body: Center(
@@ -48,7 +49,8 @@ class _ConsumptionViewState extends State<ConsumptionView> {
                 isExpanded: true,
                 iconSize: 50,
                 value: dropdownValue,
-                items: ["Última hora", "Últimas 24h"].map<DropdownMenuItem<String>>((String value) {
+                items: ["Última hora", "Últimas 24h"]
+                    .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem(
                     value: value,
                     child: Text(
@@ -69,7 +71,9 @@ class _ConsumptionViewState extends State<ConsumptionView> {
                     future: lastHour,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return ChartCard(data: snapshot.data!, chartTitle: "Consumo na última hora");
+                        return ChartCard(
+                            data: snapshot.data!,
+                            chartTitle: "Consumo na última hora");
                       }
                       return Container();
                     },
@@ -78,7 +82,9 @@ class _ConsumptionViewState extends State<ConsumptionView> {
                     future: last24H,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return ChartCard(data: snapshot.data!, chartTitle: "Consumo nas últimas 24H");
+                        return ChartCard(
+                            data: snapshot.data!,
+                            chartTitle: "Consumo nas últimas 24H");
                       }
                       return Container();
                     },
@@ -94,7 +100,8 @@ class _ConsumptionViewState extends State<ConsumptionView> {
 class ChartCard extends StatelessWidget {
   final List<ConsumptionData> data;
   final String chartTitle;
-  const ChartCard({Key? key, required this.data, required this.chartTitle}) : super(key: key);
+  const ChartCard({Key? key, required this.data, required this.chartTitle})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
