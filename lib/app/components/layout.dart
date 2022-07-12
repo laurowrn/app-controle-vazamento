@@ -35,7 +35,7 @@ class _LayoutState extends State<Layout> {
               height: 100,
               child: DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.amber,
                 ),
                 child: Text("Menu"),
               ),

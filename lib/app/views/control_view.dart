@@ -1,5 +1,5 @@
 import 'package:app/app/components/layout.dart';
-import 'package:app/app/views/home_view.dart';
+import 'package:app/app/controllers/control_controller.dart';
 import 'package:flutter/material.dart';
 
 class ControlView extends StatefulWidget {
@@ -10,30 +10,67 @@ class ControlView extends StatefulWidget {
 }
 
 class _ControlViewState extends State<ControlView> {
-  bool switchState1 = false;
-  bool switchState2 = false;
+  ControlController controlController = ControlController();
+  late Future<bool> switchState1;
+  late Future<bool> switchState2;
+
+  void getStates() async {
+    setState(() {
+      switchState1 = controlController.getValve1State();
+      switchState2 = controlController.getValve2State();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getStates();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Layout(
       body: ListView(
         children: [
-          ControlTile(
-            title: "Geral",
-            value: switchState1,
-            onChanged: (value) {
-              setState(() {
-                switchState1 = !switchState1;
-              });
-            },
+          FutureBuilder<bool>(
+            future: switchState1,
+            builder: ((context, snapshot) {
+              if (snapshot.hasData) {
+                return ControlTile(
+                  title: "Geral",
+                  value: snapshot.data!,
+                  onChanged: (value) async {
+                    var valveState = await switchState1;
+                    await controlController.changeValve1State(valveState);
+                    setState(() {
+                      getStates();
+                    });
+                  },
+                );
+              } else {
+                return Container();
+              }
+            }),
           ),
-          ControlTile(
-            title: "Torneira",
-            value: switchState2,
-            onChanged: (value) {
-              setState(() {
-                switchState2 = !switchState2;
-              });
-            },
+          FutureBuilder<bool>(
+            future: switchState2,
+            builder: ((context, snapshot) {
+              if (snapshot.hasData) {
+                return ControlTile(
+                  title: "Torneira",
+                  value: snapshot.data!,
+                  onChanged: (value) async {
+                    var valveState = await switchState2;
+                    await controlController.changeValve2State(valveState);
+                    setState(() {
+                      getStates();
+                    });
+                  },
+                );
+              } else {
+                return Container();
+              }
+            }),
           ),
         ],
       ),

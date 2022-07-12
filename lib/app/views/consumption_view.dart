@@ -1,10 +1,7 @@
-import 'dart:math';
 import 'package:app/app/charts/consumption_chart.dart';
 import 'package:app/app/charts/consumption_data.dart';
 import 'package:app/app/components/layout.dart';
-import 'package:app/app/models/SensorDataModel.dart';
-import 'package:app/firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:app/app/controllers/consumption_controller.dart';
 import 'package:flutter/material.dart';
 
 class ConsumptionView extends StatefulWidget {
@@ -15,20 +12,33 @@ class ConsumptionView extends StatefulWidget {
 }
 
 class _ConsumptionViewState extends State<ConsumptionView> {
-  ServerDataModel data = ServerDataModel();
-  final List<ConsumptionData> data1 = getData();
-  final List<ConsumptionData> data2 = getData();
+  ConsumptionController consumptionController = ConsumptionController();
+  late Future<List<ConsumptionData>> lastHour;
+  late Future<List<ConsumptionData>> last24H;
   String dropdownValue = "Última hora";
+
+  void getValues() async {
+    lastHour = consumptionController.getLastHourVolumeConsumption();
+    last24H = consumptionController.getLastHourVolumeConsumption();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getValues();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Layout(
       refresh: () async {
-        var x = await data.getValveState("valve2");
-        print(x);
+        setState(() {
+          lastHour = consumptionController.getLastHourVolumeConsumption();
+          last24H = consumptionController.getLastHourVolumeConsumption();
+        });
       },
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
               height: 60,
@@ -37,12 +47,12 @@ class _ConsumptionViewState extends State<ConsumptionView> {
                 isExpanded: true,
                 iconSize: 50,
                 value: dropdownValue,
-                items: ["Última hora", "Últimas 24h", "Últimos 7 dias"].map<DropdownMenuItem<String>>((String value) {
+                items: ["Última hora", "Últimas 24h"].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem(
                     value: value,
                     child: Text(
                       value,
-                      style: TextStyle(fontSize: 15),
+                      style: const TextStyle(fontSize: 15),
                     ),
                   );
                 }).toList(),
@@ -53,13 +63,25 @@ class _ConsumptionViewState extends State<ConsumptionView> {
                 },
               ),
             ),
-            FutureBuilder(
-              future: data.getSensorData("sensor1", "volume"),
-              builder: (context, snapshot) {
-                return Container();
-              },
-            ),
-            ChartCard(data: data2),
+            dropdownValue == "Última hora"
+                ? FutureBuilder<List<ConsumptionData>>(
+                    future: lastHour,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return ChartCard(data: snapshot.data!, chartTitle: "Consumo na última hora");
+                      }
+                      return Container();
+                    },
+                  )
+                : FutureBuilder<List<ConsumptionData>>(
+                    future: last24H,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return ChartCard(data: snapshot.data!, chartTitle: "Consumo nas últimas 24H");
+                      }
+                      return Container();
+                    },
+                  ),
           ],
         ),
       ),
@@ -70,29 +92,20 @@ class _ConsumptionViewState extends State<ConsumptionView> {
 
 class ChartCard extends StatelessWidget {
   final List<ConsumptionData> data;
-  const ChartCard({Key? key, required this.data}) : super(key: key);
+  final String chartTitle;
+  const ChartCard({Key? key, required this.data, required this.chartTitle}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
-      height: MediaQuery.of(context).size.height * 0.32,
+      height: MediaQuery.of(context).size.height * 0.50,
       child: Card(
-        child: ConsumptionChart(data: data),
+        child: ConsumptionChart(
+          data: data,
+          chartTitle: chartTitle,
+        ),
       ),
     );
   }
-}
-
-List<ConsumptionData> getData() {
-  List<ConsumptionData> data = [];
-  for (int i = -100; i < 100; i++) {
-    data.add(
-      ConsumptionData(
-        time: i,
-        consumption: pow(i, 3).toInt(),
-      ),
-    );
-  }
-  return data;
 }

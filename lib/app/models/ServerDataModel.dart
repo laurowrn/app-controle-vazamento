@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 class ServerDataModel {
   final ref = FirebaseDatabase.instance.ref("");
 
-  Future<List> getSensorData(String sensor, String data) async {
+  Future<List> getSensorData(String sensor, String variable) async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    Map snapshot = (await ref.child("/sensores/$sensor/$data").get()).value as Map;
+    Map snapshot = (await ref.child("/sensores/$sensor/$variable").get()).value as Map;
     var values = snapshot.entries.map((e) => e.value).toList();
     return values;
   }
@@ -21,5 +21,18 @@ class ServerDataModel {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     bool state = (await ref.child("/$valve").get()).value as bool;
     return state;
+  }
+
+  setValveState(String valve, bool currentState) async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await ref.child("/$valve").set(currentState ? false : true);
+  }
+
+  Future<Map> getSettings() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    Map settings = (await ref.child("/settings").get()).value as Map;
+    return settings;
   }
 }

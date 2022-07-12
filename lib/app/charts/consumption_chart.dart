@@ -4,12 +4,13 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ConsumptionChart extends StatelessWidget {
   final List<ConsumptionData> data;
-  const ConsumptionChart({Key? key, required this.data}) : super(key: key);
+  final String chartTitle;
+  const ConsumptionChart({Key? key, required this.data, required this.chartTitle}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
-      title: ChartTitle(text: "Consumo Diário"),
+      title: ChartTitle(text: chartTitle),
       primaryXAxis: CategoryAxis(),
       series: <ChartSeries>[
         LineSeries<ConsumptionData, int>(
