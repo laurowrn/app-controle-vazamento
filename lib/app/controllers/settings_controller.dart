@@ -3,15 +3,18 @@ import 'package:app/app/models/ServerDataModel.dart';
 class SettingsController {
   ServerDataModel server = ServerDataModel();
 
-  Map<String, double> settings = {
-    "consumptionLimit": 0,
-    "baseConsumption": 0,
-    "baseTariff": 0,
-    "variableTariff": 0,
-  };
-
-  updateLocalSettings() async {
-    var newSettings = await server.getSettings();
+  Future<Map<String, double>> getSettings() async {
+    var snapshot = await server.getSettings();
+    Map<String, double> map = {};
+    int baseTariff = snapshot["baseTariff"];
+    int consumptionLimit = snapshot["consumptionLimit"];
+    int baseConsumption = snapshot["baseConsumption"];
+    int variableTariff = snapshot["variableTariff"];
+    map["baseTariff"] = baseTariff.toDouble();
+    map["consumptionLimit"] = consumptionLimit.toDouble();
+    map["baseConsumption"] = baseConsumption.toDouble();
+    map["variableTariff"] = variableTariff.toDouble();
+    return map;
   }
 
   setSettings({
@@ -20,12 +23,11 @@ class SettingsController {
     required double baseTariff,
     required double variableTariff,
   }) async {
-    settings = {
-      "consumptionLimit": consumptionLimit,
-      "baseConsumption": baseConsumption,
-      "baseTariff": baseTariff,
-      "variableTariff": variableTariff,
-    };
-    server.setSettings(settings);
+    Map<String, double> map = {};
+    map["consumptionLimit"] = consumptionLimit;
+    map["baseConsumption"] = baseConsumption;
+    map["baseTariff"] = baseTariff;
+    map["variableTariff"] = variableTariff;
+    await server.setSettings(map);
   }
 }

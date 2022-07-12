@@ -15,15 +15,14 @@ class _SettingsViewState extends State<SettingsView> {
   TextEditingController textEditingController3 = TextEditingController();
   TextEditingController textEditingController4 = TextEditingController();
   SettingsController settingsController = SettingsController();
-  String dailyConsumptionLimit = "0";
-
+  late Future<Map<String, double>> settings;
   update() async {
-    textEditingController1.text = settingsController.settings["consumptionLimit"].toString();
+    settings = settingsController.getSettings();
   }
 
   @override
   void initState() {
-    settingsController.updateLocalSettings();
+    super.initState();
     update();
   }
 
@@ -32,6 +31,9 @@ class _SettingsViewState extends State<SettingsView> {
     return Layout(
       actionIcon: Icons.save,
       action: () async {
+        setState(() {
+          update();
+        });
         await settingsController.setSettings(
           consumptionLimit: double.parse(textEditingController1.text),
           baseConsumption: double.parse(textEditingController2.text),
@@ -43,64 +45,75 @@ class _SettingsViewState extends State<SettingsView> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Expanded(
-                child: TextField(
-                  maxLength: 5,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.water_damage),
-                    labelText: "Limite do alerta de consumo diário",
-                  ),
-                  controller: textEditingController1,
-                  onChanged: (newText) {
-                    dailyConsumptionLimit = textEditingController1.text;
-                  },
-                ),
-              ),
-              Expanded(
-                child: TextField(
-                  maxLength: 5,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.inventory),
-                    labelText: "Consumo base",
-                  ),
-                  controller: textEditingController2,
-                  onChanged: (newText) {
-                    dailyConsumptionLimit = textEditingController2.text;
-                  },
-                ),
-              ),
-              Expanded(
-                child: TextField(
-                  maxLength: 5,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.attach_money),
-                    labelText: "Tarifa base",
-                  ),
-                  controller: textEditingController3,
-                  onChanged: (newText) {
-                    dailyConsumptionLimit = textEditingController3.text;
-                  },
-                ),
-              ),
-              Expanded(
-                child: TextField(
-                  maxLength: 5,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.attach_money),
-                    labelText: "Tarifa variável",
-                  ),
-                  controller: textEditingController4,
-                  onChanged: (newText) {
-                    dailyConsumptionLimit = textEditingController4.text;
-                  },
-                ),
-              ),
-            ],
+          child: FutureBuilder<Map<String, double>>(
+            future: settings,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Column(
+                  children: [
+                    SettingsTextField(
+                      textEditingController: textEditingController1,
+                      text: snapshot.requireData["consumptionLimit"].toString(),
+                      labelText: "Limite de consumo",
+                    ),
+                    SettingsTextField(
+                      textEditingController: textEditingController2,
+                      text: snapshot.requireData["baseConsumption"].toString(),
+                      labelText: "Consumo base",
+                    ),
+                    SettingsTextField(
+                      textEditingController: textEditingController3,
+                      text: snapshot.requireData["baseTariff"].toString(),
+                      labelText: "Tarifa base",
+                    ),
+                    SettingsTextField(
+                      textEditingController: textEditingController4,
+                      text: snapshot.requireData["variableTariff"].toString(),
+                      labelText: "Tarifa variavel",
+                    ),
+                  ],
+                );
+              }
+              return Container();
+            },
           ),
         ),
       ),
     );
+  }
+}
+
+class SettingsTextField extends StatelessWidget {
+  final TextEditingController textEditingController;
+  final String text;
+  final String labelText;
+  const SettingsTextField(
+      {Key? key,
+      required this.textEditingController,
+      required this.text,
+      required this.labelText})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            maxLength: 5,
+            decoration: InputDecoration(
+              icon: const Icon(Icons.water_damage),
+              labelText: labelText,
+            ),
+            controller: textEditingController,
+          ),
+        ),
+        const SizedBox(
+          width: 50,
+        ),
+        Text(text),
+      ],
+    );
+    ;
   }
 }
