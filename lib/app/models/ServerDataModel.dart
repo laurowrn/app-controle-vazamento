@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -34,5 +32,11 @@ class ServerDataModel {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     Map settings = (await ref.child("/settings").get()).value as Map;
     return settings;
+  }
+
+  setSettings(Map newSettings) async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await ref.child("/settings").set(newSettings);
   }
 }

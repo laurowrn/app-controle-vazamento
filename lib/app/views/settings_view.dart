@@ -1,4 +1,5 @@
 import 'package:app/app/components/layout.dart';
+import 'package:app/app/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
 
 class SettingsView extends StatefulWidget {
@@ -13,10 +14,31 @@ class _SettingsViewState extends State<SettingsView> {
   TextEditingController textEditingController2 = TextEditingController();
   TextEditingController textEditingController3 = TextEditingController();
   TextEditingController textEditingController4 = TextEditingController();
+  SettingsController settingsController = SettingsController();
   String dailyConsumptionLimit = "0";
+
+  update() async {
+    textEditingController1.text = settingsController.settings["consumptionLimit"].toString();
+  }
+
+  @override
+  void initState() {
+    settingsController.updateLocalSettings();
+    update();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Layout(
+      actionIcon: Icons.save,
+      action: () async {
+        await settingsController.setSettings(
+          consumptionLimit: double.parse(textEditingController1.text),
+          baseConsumption: double.parse(textEditingController2.text),
+          baseTariff: double.parse(textEditingController3.text),
+          variableTariff: double.parse(textEditingController4.text),
+        );
+      },
       title: "Configurações",
       body: Center(
         child: Padding(

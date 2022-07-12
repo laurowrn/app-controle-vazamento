@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class Layout extends StatefulWidget {
   final String title;
   final Widget body;
-  final void Function()? refresh;
-  Layout({Key? key, required this.title, required this.body, this.refresh}) : super(key: key);
+  final void Function()? action;
+  final IconData? actionIcon;
+  Layout({Key? key, required this.title, required this.body, this.action, this.actionIcon}) : super(key: key);
 
   @override
   State<Layout> createState() => _LayoutState();
@@ -20,10 +21,12 @@ class _LayoutState extends State<Layout> {
           widget.title,
         ),
         actions: [
-          IconButton(
-            onPressed: widget.refresh,
-            icon: Icon(Icons.refresh),
-          )
+          widget.action != null
+              ? IconButton(
+                  onPressed: widget.action,
+                  icon: Icon(widget.actionIcon),
+                )
+              : Container()
         ],
       ),
       body: widget.body,

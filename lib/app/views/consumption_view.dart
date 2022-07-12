@@ -31,7 +31,8 @@ class _ConsumptionViewState extends State<ConsumptionView> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      refresh: () async {
+      actionIcon: Icons.refresh,
+      action: () async {
         setState(() {
           lastHour = consumptionController.getLastHourVolumeConsumption();
           last24H = consumptionController.getLastHourVolumeConsumption();
