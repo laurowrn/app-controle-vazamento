@@ -14,6 +14,11 @@ class Layout extends StatefulWidget {
 
 class _LayoutState extends State<Layout> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

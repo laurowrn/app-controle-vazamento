@@ -1,5 +1,6 @@
 import 'package:app/app/charts/consumption_data.dart';
 import 'package:app/app/models/ServerDataModel.dart';
+import 'package:intl/date_symbol_data_file.dart';
 import 'package:intl/intl.dart';
 
 class ConsumptionController {
@@ -15,9 +16,9 @@ class ConsumptionController {
       data = response;
     }
     List<ConsumptionData> list = [];
-    data.forEach((element) {
-      list.add(ConsumptionData(
-          time: element["timestamp"], consumption: element["value"]));
+    data.forEach((element) async {
+      var date = DateTime.fromMillisecondsSinceEpoch(element["timestamp"]);
+      list.add(ConsumptionData(time: element["timestamp"], consumption: element["value"]));
     });
     return list;
   }
@@ -26,15 +27,14 @@ class ConsumptionController {
     List response = await server.getSensorData("sensor2", "volume");
     var length = response.length;
     var data;
-    if (length >= 720) {
+    if (length >= 17280) {
       data = response.sublist(length - 17280, length);
     } else {
       data = response;
     }
     List<ConsumptionData> list = [];
     data.forEach((element) {
-      list.add(ConsumptionData(
-          time: element["timestamp"], consumption: element["value"]));
+      list.add(ConsumptionData(time: element["timestamp"], consumption: element["value"]));
     });
     return list;
   }

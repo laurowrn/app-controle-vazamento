@@ -18,11 +18,17 @@ class _SettingsViewState extends State<SettingsView> {
   late Future<Map<String, double>> settings;
   update() async {
     settings = settingsController.getSettings();
+    Map<String, double> set = await settings;
+    textEditingController1.text = set["consumptionLimit"].toString();
+    textEditingController2.text = set["baseConsumption"].toString();
+    textEditingController3.text = set["baseTariff"].toString();
+    textEditingController4.text = set["variableTariff"].toString();
   }
 
   @override
   void initState() {
     super.initState();
+
     update();
   }
 
@@ -31,15 +37,15 @@ class _SettingsViewState extends State<SettingsView> {
     return Layout(
       actionIcon: Icons.save,
       action: () async {
-        setState(() {
-          update();
-        });
         await settingsController.setSettings(
           consumptionLimit: double.parse(textEditingController1.text),
           baseConsumption: double.parse(textEditingController2.text),
           baseTariff: double.parse(textEditingController3.text),
           variableTariff: double.parse(textEditingController4.text),
         );
+        setState(() {
+          update();
+        });
       },
       title: "Configurações",
       body: Center(
@@ -53,22 +59,18 @@ class _SettingsViewState extends State<SettingsView> {
                   children: [
                     SettingsTextField(
                       textEditingController: textEditingController1,
-                      text: snapshot.requireData["consumptionLimit"].toString(),
                       labelText: "Limite de consumo",
                     ),
                     SettingsTextField(
                       textEditingController: textEditingController2,
-                      text: snapshot.requireData["baseConsumption"].toString(),
                       labelText: "Consumo base",
                     ),
                     SettingsTextField(
                       textEditingController: textEditingController3,
-                      text: snapshot.requireData["baseTariff"].toString(),
                       labelText: "Tarifa base",
                     ),
                     SettingsTextField(
                       textEditingController: textEditingController4,
-                      text: snapshot.requireData["variableTariff"].toString(),
                       labelText: "Tarifa variavel",
                     ),
                   ],
@@ -85,14 +87,8 @@ class _SettingsViewState extends State<SettingsView> {
 
 class SettingsTextField extends StatelessWidget {
   final TextEditingController textEditingController;
-  final String text;
   final String labelText;
-  const SettingsTextField(
-      {Key? key,
-      required this.textEditingController,
-      required this.text,
-      required this.labelText})
-      : super(key: key);
+  const SettingsTextField({Key? key, required this.textEditingController, required this.labelText}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -108,10 +104,6 @@ class SettingsTextField extends StatelessWidget {
             controller: textEditingController,
           ),
         ),
-        const SizedBox(
-          width: 50,
-        ),
-        Text(text),
       ],
     );
     ;

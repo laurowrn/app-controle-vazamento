@@ -8,10 +8,8 @@ class ServerDataModel {
 
   Future<List> getSensorData(String sensor, String variable) async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
-    var snapshot =
-        (await ref.child("/sensores/$sensor/$variable").get()).value as Map;
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    var snapshot = (await ref.child("/sensores/$sensor/$variable").get()).value as Map;
     List list = [];
     snapshot.forEach((key, value) {
       int tempo = value["timestamp"];
@@ -22,36 +20,33 @@ class ServerDataModel {
       mapa["value"] = data2;
       list.add(mapa);
     });
+    list.sort((a, b) => a["timestamp"].compareTo(b["timestamp"]));
     return list;
   }
 
   Future<bool> getValveState(String valve) async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     bool state = (await ref.child("/$valve").get()).value as bool;
     return state;
   }
 
   setValveState(String valve, bool currentState) async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     await ref.child("/$valve").set(currentState ? false : true);
   }
 
   Future<Map> getSettings() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     Map settings = (await ref.child("/settings").get()).value as Map;
     return settings;
   }
 
   setSettings(Map newSettings) async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     await ref.child("/settings").set(newSettings);
   }
 }

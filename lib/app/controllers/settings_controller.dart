@@ -6,14 +6,14 @@ class SettingsController {
   Future<Map<String, double>> getSettings() async {
     var snapshot = await server.getSettings();
     Map<String, double> map = {};
-    int baseTariff = snapshot["baseTariff"];
-    int consumptionLimit = snapshot["consumptionLimit"];
-    int baseConsumption = snapshot["baseConsumption"];
-    int variableTariff = snapshot["variableTariff"];
-    map["baseTariff"] = baseTariff.toDouble();
-    map["consumptionLimit"] = consumptionLimit.toDouble();
-    map["baseConsumption"] = baseConsumption.toDouble();
-    map["variableTariff"] = variableTariff.toDouble();
+    double baseTariff = snapshot["baseTariff"].toDouble();
+    double consumptionLimit = snapshot["consumptionLimit"].toDouble();
+    double baseConsumption = snapshot["baseConsumption"].toDouble();
+    double variableTariff = snapshot["variableTariff"].toDouble();
+    map["baseTariff"] = baseTariff;
+    map["consumptionLimit"] = consumptionLimit;
+    map["baseConsumption"] = baseConsumption;
+    map["variableTariff"] = variableTariff;
     return map;
   }
 
