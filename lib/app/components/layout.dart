@@ -1,5 +1,6 @@
 import 'package:app/app/routes.dart';
 import 'package:app/app/services/firebase_messaging_service.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,8 @@ class Layout extends StatefulWidget {
 class _LayoutState extends State<Layout> {
   initializeFirebaseMessaging() async {
     await Provider.of<FirebaseMessagingService>(context, listen: false).initialize();
+    String? token = await Provider.of<FirebaseMessagingService>(context, listen: false).getDeviceFirebaseToken();
+    await FirebaseDatabase.instance.ref('/token').set(token);
   }
 
   @override
