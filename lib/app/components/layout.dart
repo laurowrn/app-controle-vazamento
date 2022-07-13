@@ -1,5 +1,8 @@
 import 'package:app/app/routes.dart';
+import 'package:app/app/services/firebase_messaging_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Layout extends StatefulWidget {
   final String title;
@@ -13,9 +16,14 @@ class Layout extends StatefulWidget {
 }
 
 class _LayoutState extends State<Layout> {
+  initializeFirebaseMessaging() async {
+    await Provider.of<FirebaseMessagingService>(context, listen: false).initialize();
+  }
+
   @override
   void initState() {
     super.initState();
+    initializeFirebaseMessaging();
   }
 
   @override

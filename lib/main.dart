@@ -1,4 +1,5 @@
 import 'package:app/app/routes.dart';
+import 'package:app/app/services/firebase_messaging_service.dart';
 import 'package:app/app/services/notification_service.dart';
 import 'package:app/app/views/home_view.dart';
 import 'package:app/firebase_options.dart';
@@ -10,11 +11,17 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(
     MultiProvider(
       providers: [
         Provider<NotificationService>(
           create: ((context) => NotificationService()),
+        ),
+        Provider<FirebaseMessagingService>(
+          create: ((context) => FirebaseMessagingService(
+                context.read<NotificationService>(),
+              )),
         ),
       ],
       child: MaterialApp(
