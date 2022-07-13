@@ -1,5 +1,7 @@
 import 'package:app/app/components/layout.dart';
+import 'package:app/app/services/notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
   HomeView({Key? key}) : super(key: key);
@@ -9,9 +11,22 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  bool valor = false;
   @override
   Widget build(BuildContext context) {
     return Layout(
+      action: () async {
+        valor = !valor;
+        if (valor) {
+          Provider.of<NotificationService>(context, listen: false).showNotification(CustomNotification(
+            id: 1,
+            title: 'Teste',
+            body: 'Acesse o app',
+            payload: '/settings',
+          ));
+        }
+      },
+      actionIcon: Icons.golf_course,
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: ListView(children: [
