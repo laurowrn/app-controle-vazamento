@@ -6,8 +6,25 @@ import 'package:intl/intl.dart';
 class ConsumptionController {
   ServerDataModel server = ServerDataModel();
 
-  Future<List<ConsumptionData>> getLastHourVolumeConsumption() async {
-    List response = await server.getSensorData("sensor2", "volume");
+  Future<List<ConsumptionData>> getLast10MinutesFlowRate() async {
+    List response = await server.getSensorData("sensor2", "flowRate");
+    var length = response.length;
+    var data;
+    if (length >= 120) {
+      data = response.sublist(length - 120, length);
+    } else {
+      data = response;
+    }
+    List<ConsumptionData> list = [];
+    data.forEach((element) async {
+      var date = DateTime.fromMillisecondsSinceEpoch(element["timestamp"]);
+      list.add(ConsumptionData(time: element["timestamp"], consumption: element["value"]));
+    });
+    return list;
+  }
+
+  Future<List<ConsumptionData>> getLastHourFlowRate() async {
+    List response = await server.getSensorData("sensor2", "flowRate");
     var length = response.length;
     var data;
     if (length >= 720) {
@@ -23,8 +40,8 @@ class ConsumptionController {
     return list;
   }
 
-  Future<List<ConsumptionData>> getLast24HVolumeConsumption() async {
-    List response = await server.getSensorData("sensor2", "volume");
+  Future<List<ConsumptionData>> getLast24HoursFlowRate() async {
+    List response = await server.getSensorData("sensor2", "flowRate");
     var length = response.length;
     var data;
     if (length >= 17280) {
